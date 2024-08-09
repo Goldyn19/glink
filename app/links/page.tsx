@@ -1,6 +1,6 @@
 "use client";
 import { useSession } from "next-auth/react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/navbar";
 import Image from "next/image";
 import Emptylink from "../components/emptylink";
@@ -14,10 +14,74 @@ type Link = {
   url: string;
 };
 
+// Define the possible values for the links
+const possibleLinks = [
+  { value: "GitHub", icon: "/images/githubicon.svg", color: "#1A1A1A" },
+  { value: "Frontend Mentor", icon: "/images/frontendmentor.svg", color: "#FFFFFF" },
+  { value: "Twitter", icon: "/images/twitter.svg", color: "#43B7E9" },
+  { value: "Linkedin", icon: "/images/linkedin.svg", color: "#2D68FF" },
+  { value: "Youtube", icon: "/images/youtube.svg", color: "#EE3939" },
+  { value: "Facebook", icon: "/images/facebook.svg", color: "#2442AC" },
+  { value: "twitch", icon: "/images/twitch.svg", color: "#EE3FC8" },
+  { value: "dev.to", icon: "/images/devto.svg", color: "#333333" },
+  { value: "Codewars", icon: "/images/codewars.svg", color: "#8A1A50" },
+  { value: "Codepen", icon: "/images/codepen.svg", color: "#1A1A1A" },
+  { value: "freeCodeCamp", icon: "/images/freecodecamp.svg", color: "#302267" },
+  { value: "GitLab", icon: "/images/gitlab.svg", color: "#EB4925" },
+  { value: "Hashnode", icon: "/images/hashnode.svg", color: "#0330D1" },
+  { value: "Stack Overflow", icon: "/images/stackoverflow.svg", color: "#EC7100" }
+];
+
+// Function to fetch and map links
+const fetchAndMapLinks = async (accessToken: string): Promise<Link[]> => {
+  try {
+    const response = await fetch('http://127.0.0.1:8008/link/user-links', {
+      headers: {
+        "Authorization": `Bearer ${accessToken}`
+      }
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+
+    return data.map((item: {id:string; label: string; link: string }) => {
+      const match = possibleLinks.find(l => l.value === item.label);
+
+      if (!match) {
+        throw new Error(`No matching link data found for value: ${item.label}`);
+      }
+
+      return {
+        id: item.id, // Generate a unique ID
+        value: match.value,
+        icon: match.icon,
+        color: match.color,
+        url: item.link
+      };
+    });
+  } catch (error) {
+    console.error('Error fetching and mapping links:', error);
+    return [];
+  }
+};
+
 const Page: React.FC = () => {
   const [links, setLinks] = useState<Link[]>([]);
   const [error, setError] = useState("");
   const { data: session } = useSession();
+
+  useEffect(() => {
+    // Fetch and set links when the component mounts
+    const loadLinks = async () => {
+      if (session?.accessToken) {
+        const fetchedLinks = await fetchAndMapLinks(session.accessToken);
+        setLinks(fetchedLinks);
+      }
+    };
+
+    loadLinks();
+  }, [session]);
 
   const addNewLink = () => {
     setLinks([
@@ -94,7 +158,6 @@ const Page: React.FC = () => {
       setError("Please fill in all URL fields.");
       return;
     }
-    console.log(session)
 
     setError("");
 
@@ -103,7 +166,7 @@ const Page: React.FC = () => {
         label: link.value,
         link: link.url,
       };
-      console.log(body)
+
       await fetch(url, {
         method: "POST",
         headers: {
