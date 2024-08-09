@@ -6,7 +6,7 @@ const page = () => {
     <div className="p-0">
       <Navbar />
       <div className="lg:grid lg:grid-cols-5 block h-full mt-3">
-        <div className="hidden lg:flex justify-center col-span-2 w-full h-full bg-white mx-auto align-middle items-center">
+        <div className="hidden lg:flex justify-center col-span-2 w-full h-full bg-white mx-auto align-middle items-center relative">
           <Image
             src="/images/mobile-preview.svg"
             alt="logo"
@@ -14,6 +14,9 @@ const page = () => {
             height={632}
             width={308}
           />
+          <div className='bg-[#EEEEEE] rounded-full h-[100px] w-[100px] z-10 flex justify-between absolute top-32'></div>
+          <div className='bg-[#EEEEEE] rounded-lg h-[16px] w-[160px] z-10 flex justify-between absolute top-60 mt-3 '></div>
+          <div className='bg-[#EEEEEE] rounded-lg h-[8px] w-[72px] z-10 flex justify-between absolute top-72  '></div>
         </div>
         <div className="px-5 bg-white col-span-3 ml-2 pb-24 relative ">
           <h1 className="text-heading-m pt-5">Profile Details</h1>
@@ -22,8 +25,8 @@ const page = () => {
           </h1>
 
           <div className="mt-5 bg-light-grey px-3 rounded-md ">
-            <div className="md:flex  justify-start items-center">
-              <h1 className="text-body-m text-light-black w-full md:w-1/4 ">
+            <div className="md:flex  justify-start items-center py-3">
+              <h1 className="text-body-m text-light-black w-full md:w-1/4 mx-5">
                 Profile picture
               </h1>
               <button className="bg-light-purple flex flex-col items-center px-5 py-8 rounded-md m-5">

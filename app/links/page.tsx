@@ -1,4 +1,5 @@
 "use client";
+import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import Navbar from "../components/navbar";
 import Image from "next/image";
@@ -10,22 +11,46 @@ type Link = {
   value: string;
   icon: string;
   color: string;
+  url: string;
 };
 
 const Page: React.FC = () => {
   const [links, setLinks] = useState<Link[]>([]);
+  const [error, setError] = useState("");
+  const { data: session } = useSession();
 
   const addNewLink = () => {
     setLinks([
       ...links,
-      { id: links.length + 1, value: "GitHub", icon: "/images/githubicon.svg", color: "#1A1A1A" }
+      {
+        id: links.length + 1,
+        value: "GitHub",
+        icon: "/images/githubicon.svg",
+        color: "#1A1A1A",
+        url: "",
+      },
     ]);
   };
 
-  const updateLink = (id: number, selectedOption: { value: string; icon: string; color: string }) => {
+  const updateLink = (
+    id: number,
+    selectedOption: { value: string; icon: string; color: string },
+    url: string
+  ) => {
     setLinks((prevLinks) =>
-      prevLinks.map((link) => (link.id === id ? { ...link, ...selectedOption } : link))
+      prevLinks.map((link) =>
+        link.id === id ? { ...link, ...selectedOption, url } : link
+      )
     );
+  };
+
+  const removeLink = (id: number) => {
+    const updatedLinks = links.filter((link) => link.id !== id);
+    const resetLinks = updatedLinks.map((link, index) => ({
+      ...link,
+      id: index + 1,
+    }));
+    setLinks(resetLinks);
   };
 
   const renderLinks = () => {
@@ -35,23 +60,59 @@ const Page: React.FC = () => {
         id: -1,
         value: "",
         icon: "",
-        color: "#E5E5E5"
-      })
+        color: "#E5E5E5",
+      }),
     ];
 
     return filledLinks.map((link, index) => (
       <div
         key={index}
-        className="bg-[#EEEEEE] rounded-lg h-[45px] w-[240px] z-10 flex items-center justify-between px-2 "
+        className={`bg-[#EEEEEE] rounded-lg h-[45px] w-[240px] z-10 flex items-center justify-between px-2 border border-dark-grey ${
+          link.text ? "text-" + link.text : "text-white"
+        }`}
         style={{ backgroundColor: link.color }}
       >
-        <div className="flex text-body-s text-white">
-        {link.icon && <Image src={link.icon} alt={link.value} width={16} height={16} className=""/>}
-        <span className="ml-2">{link.value}</span>
+        <div className="flex text-body-s">
+          {link.icon && (
+            <Image src={link.icon} alt={link.value} width={16} height={16} className="" />
+          )}
+          <span className="ml-2">{link.value}</span>
         </div>
         <div></div>
       </div>
     ));
+  };
+
+  const handleSubmit = async () => {
+    if (!session) return;
+    
+    const url = "http://127.0.0.1:8008/link/create-link";
+
+    // Check for empty URLs
+    const hasEmptyUrls = links.some((link) => link.url.trim() === "");
+    if (hasEmptyUrls) {
+      setError("Please fill in all URL fields.");
+      return;
+    }
+    console.log(session)
+
+    setError("");
+
+    for (const link of links) {
+      const body = {
+        label: link.value,
+        link: link.url,
+      };
+
+      await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session.accessToken}`,
+        },
+        body: JSON.stringify(body),
+      });
+    }
   };
 
   return (
@@ -66,10 +127,10 @@ const Page: React.FC = () => {
             height={632}
             width={308}
           />
-          <div className='bg-[#EEEEEE] rounded-full h-[100px] w-[100px] z-10 flex justify-between absolute top-32'></div>
-          <div className='bg-[#EEEEEE] rounded-lg h-[16px] w-[160px] z-10 flex justify-between absolute top-60 mt-3 '></div>
-          <div className='bg-[#EEEEEE] rounded-lg h-[8px] w-[72px] z-10 flex justify-between absolute top-72  '></div>
-          <div className="p-5 space-y-4 z-10 flex flex-col justify-between absolute bottom-24">
+          <div className="bg-[#EEEEEE] rounded-full h-[100px] w-[100px] z-10 flex justify-between absolute top-32"></div>
+          <div className="bg-[#EEEEEE] rounded-lg h-[16px] w-[160px] z-10 flex justify-between absolute top-60 mt-3 "></div>
+          <div className="bg-[#EEEEEE] rounded-lg h-[8px] w-[72px] z-10 flex justify-between absolute top-72  "></div>
+          <div className="p-5 space-y-4 z-10 flex flex-col justify-between absolute bottom-28 h-[300px] overflow-y-scroll scrollbar-hide">
             {renderLinks()}
           </div>
         </div>
@@ -79,19 +140,30 @@ const Page: React.FC = () => {
             Add/edit/remove links below and then share all your profiles with the world!
           </p>
           <button
-            className="text-heading-s text-custom-blue border border-custom-blue w-full rounded-lg mt-8"
+            className="text-heading-s text-custom-blue border border-custom-blue w-full rounded-lg mt-8 mb-5 z-10 "
             onClick={addNewLink}
           >
             + Add new link
           </button>
-          <div className="pt-5 lg:h-[400px] overflow-y-scroll scrollbar-hide">
+          <div className="lg:h-[400px] overflow-y-scroll scrollbar-hide">
             {links.map((link) => (
-              <LinkForm key={link.id} id={link.id} updateLink={updateLink} />
+              <LinkForm
+                key={link.id}
+                id={link.id}
+                selectedOption={{ value: link.value, icon: link.icon, color: link.color }}
+                url={link.url}
+                updateLink={updateLink}
+                removeLink={removeLink}
+              />
             ))}
             {links.length === 0 && <Emptylink />}
           </div>
+         
           <hr className="w-full mt-8 mb-5 border-light-black" />
-          <button className="bg-light-purple py-4 rounded-lg px-5 absolute right-5">
+          <button
+            className={`py-4 rounded-lg px-5 absolute right-5 ${links.length > 0 ? 'bg-custom-blue' : 'bg-light-purple'}`}
+            onClick={handleSubmit}
+          >
             Save
           </button>
         </div>

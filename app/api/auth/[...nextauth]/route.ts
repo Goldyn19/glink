@@ -1,5 +1,6 @@
-import NextAuth from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
+// [...nextauth].ts
+import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 interface LoginResponse {
   tokens: {
@@ -20,14 +21,13 @@ interface User {
   // Add other user fields as needed
 }
 
-
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
         const response = await fetch(process.env.BACK_END_URL + '/auth/login', {
@@ -36,7 +36,7 @@ const handler = NextAuth({
           body: JSON.stringify(credentials),
         });
 
-        if (response.status === 200) {
+        if (response.ok) {
           const data: LoginResponse = await response.json();
           if (data.tokens) {
             const accessToken = data.tokens.access;
@@ -46,33 +46,33 @@ const handler = NextAuth({
             throw new Error('Invalid username or password');
           }
         } else {
-          console.log(response);
+          console.error(response);
           throw new Error('No Server Response');
         }
-      }
-    })
+      },
+    }),
   ],
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.accessToken = user.tokens?.access;
+        const customUser = user as User;  // Cast user to your custom User type
+        token.id = customUser.id;
+        token.accessToken = customUser.accessToken;
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
-        session.id = token.id as string;
+        session.user = session.user || {}; // Ensure session.user is initialized
+        session.user.id = token.id as string;
         session.accessToken = token.accessToken as string;
       }
       return session;
-    }
+    },
   },
   pages: {
-    signIn: '/',  // Customize the login page URL
-  }
+    signIn: '/', // Customize the login page URL
+  },
 });
 
-
-
-export { handler as GET, handler as POST }
+export { handler as GET, handler as POST };
