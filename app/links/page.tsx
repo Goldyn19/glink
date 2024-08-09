@@ -103,7 +103,7 @@ const Page: React.FC = () => {
         label: link.value,
         link: link.url,
       };
-
+      console.log(body)
       await fetch(url, {
         method: "POST",
         headers: {
