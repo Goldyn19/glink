@@ -27,7 +27,7 @@ const LinkForm: React.FC<LinkFormProps> = ({ id, selectedOption, url, updateLink
     { value: "twitch", icon: "/images/twitch.svg", color: "#EE3FC8" },
     { value: "dev.to", icon: "/images/devto.svg", color: "#333333" },
     { value: "Codewars", icon: "/images/codewars.svg", color: "#8A1A50" },
-    { value: "Codepen", icon: "/images/codepen.svg", color: "#1A1A1A" },
+    { value: "Codepen", icon: "/images/codepen.svg", color: "#198F51" },
     { value: "freeCodeCamp", icon: "/images/freecodecamp.svg", color: "#302267" },
     { value: "GitLab", icon: "/images/gitlab.svg", color: "#EB4925" },
     { value: "Hashnode", icon: "/images/hashnode.svg", color: "#0330D1" },
@@ -122,7 +122,7 @@ const LinkForm: React.FC<LinkFormProps> = ({ id, selectedOption, url, updateLink
           type="text"
           id="link-input"
           className={`rounded-lg block w-full pl-10 border text-body-m ${urlError ? "border-red-500 placeholder-red-500" : "border-dark-grey"}`}
-          placeholder={urlError || "e.g. https://www.github.com/johnappleseed"}
+          placeholder={urlError || `e.g. https://www.${selectedOption.value}.com/johnappleseed`}
           value={inputUrl}
           onChange={handleUrlChange}
         />

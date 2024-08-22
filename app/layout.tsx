@@ -17,6 +17,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <title>
+          glink
+        </title>
+        <link rel="icon" href="/images/logo.svg"/>
+      </head>
       <body className={inter.className}>
         <SessionProviderWrapper>{children}</SessionProviderWrapper>
       </body>

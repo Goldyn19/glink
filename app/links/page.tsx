@@ -25,7 +25,7 @@ const possibleLinks = [
   { value: "twitch", icon: "/images/twitch.svg", color: "#EE3FC8" },
   { value: "dev.to", icon: "/images/devto.svg", color: "#333333" },
   { value: "Codewars", icon: "/images/codewars.svg", color: "#8A1A50" },
-  { value: "Codepen", icon: "/images/codepen.svg", color: "#1A1A1A" },
+  { value: "Codepen", icon: "/images/codepen.svg", color: "#198F51" },
   { value: "freeCodeCamp", icon: "/images/freecodecamp.svg", color: "#302267" },
   { value: "GitLab", icon: "/images/gitlab.svg", color: "#EB4925" },
   { value: "Hashnode", icon: "/images/hashnode.svg", color: "#0330D1" },
@@ -142,7 +142,12 @@ const Page: React.FC = () => {
           )}
           <span className="ml-2">{link.value}</span>
         </div>
-        <div></div>
+        <div>
+        {link.icon && (
+            <Image src="/images/arrowright.svg" alt={link.value} width={16} height={16} className="" />
+          )}
+        
+        </div>
       </div>
     ));
   };
@@ -165,6 +170,7 @@ const Page: React.FC = () => {
       const body = {
         label: link.value,
         link: link.url,
+        link_id: link.id
       };
 
       await fetch(url, {
