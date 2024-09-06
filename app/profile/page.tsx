@@ -43,7 +43,7 @@ const possibleLinks = [
 const fetchAndMapLinks = async (accessToken: string): Promise<Link[]> => {
   try {
     
-    const response = await fetch("http://127.0.0.1:8008/link/user-links", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/link/user-links`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

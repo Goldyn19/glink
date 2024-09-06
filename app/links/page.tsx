@@ -35,7 +35,8 @@ const possibleLinks = [
 // Function to fetch and map links
 const fetchAndMapLinks = async (accessToken: string): Promise<Link[]> => {
   try {
-    const response = await fetch('http://127.0.0.1:8008/link/user-links', {
+    
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/link/user-links`, {
       headers: {
         "Authorization": `Bearer ${accessToken}`
       }
@@ -155,7 +156,7 @@ const Page: React.FC = () => {
   const handleSubmit = async () => {
     if (!session) return;
     
-    const url = "http://127.0.0.1:8008/link/create-link";
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/link/create-link`;
 
     // Check for empty URLs
     const hasEmptyUrls = links.some((link) => link.url.trim() === "");

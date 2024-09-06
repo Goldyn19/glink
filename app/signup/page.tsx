@@ -1,6 +1,57 @@
-import React from 'react'
+import React, {useState} from 'react'
 import Image from 'next/image'
-const page = () => {
+const Page = () => {
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // Clear previous errors
+    setError('');
+
+    // Basic validation
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
+    // Proceed with form submission (e.g., send data to the backend)
+    const formData = {
+      email,
+      password,
+    };
+
+    console.log('Form data:', formData);
+
+    // You can use fetch or axios to send formData to your backend here
+    // Example with fetch:
+   
+    fetch('YOUR_API_ENDPOINT', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error('Error:', error));
+    
+
+    // Clear form fields
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
+  };
   return (
     <div className="flex flex-col items-center mx-auto p-4 justify-center h-screen ">
     <div className="flex items-center mb-5">
@@ -46,6 +97,8 @@ const page = () => {
             id="email-address-icon"
             className=" rounded-lg block w-full pl-10  border border-dark-grey text-body-m  focus:border-custom-blue focus:outline-custom-blue focus:shadow-sm focus:shadow-custom-blue"
             placeholder="e.g. alex@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
         <label
@@ -74,6 +127,8 @@ const page = () => {
             id="email-address-icon"
             className=" rounded-lg block w-full pl-10  border border-dark-grey text-body-m  focus:border-custom-blue focus:outline-custom-blue focus:shadow-sm focus:shadow-custom-blue"
             placeholder="At least 8 characters"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
         <label
@@ -118,4 +173,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page
