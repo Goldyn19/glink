@@ -94,7 +94,7 @@ const Page = () => {
             </svg>
           </div>
           <input
-            type="text"
+            type="email"
             id="email-address-icon"
             className=" rounded-lg block w-full pl-10  border border-dark-grey text-body-m  focus:border-custom-blue focus:outline-custom-blue focus:shadow-sm focus:shadow-custom-blue"
             placeholder="e.g. alex@email.com"
@@ -124,7 +124,7 @@ const Page = () => {
             </svg>
           </div>
           <input
-            type="text"
+            type="password"
             id="email-address-icon"
             className=" rounded-lg block w-full pl-10  border border-dark-grey text-body-m  focus:border-custom-blue focus:outline-custom-blue focus:shadow-sm focus:shadow-custom-blue"
             placeholder="At least 8 characters"
@@ -154,7 +154,7 @@ const Page = () => {
             </svg>
           </div>
           <input
-            type="text"
+            type="password"
             id="email-address-icon"
             className=" rounded-lg block w-full pl-10  border border-dark-grey text-body-m  focus:border-custom-blue focus:outline-custom-blue focus:shadow-sm focus:shadow-custom-blue"
             placeholder="At least 8 characters"
