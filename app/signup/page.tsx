@@ -9,6 +9,7 @@ const Page = () => {
   const [error, setError] = useState('');
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    
     e.preventDefault();
 
     // Clear previous errors
@@ -25,7 +26,7 @@ const Page = () => {
       return;
     }
 
-    // Proceed with form submission (e.g., send data to the backend)
+    
     const formData = {
       email,
       password,
@@ -33,10 +34,11 @@ const Page = () => {
 
     console.log('Form data:', formData);
 
-    // You can use fetch or axios to send formData to your backend here
-    // Example with fetch:
-   
-    fetch('YOUR_API_ENDPOINT', {
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/auth/register`;
+
+
+   //posting to backend
+    fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -71,7 +73,7 @@ const Page = () => {
       Let&apos;s get you started sharing your links!
       </h2>
 
-      <form className=" w-full">
+      <form className=" w-full" onSubmit={handleSubmit}>
         <label
           htmlFor="email-address-icon"
           className="block text-body-s mb-[-10px]"
@@ -158,10 +160,15 @@ const Page = () => {
             id="email-address-icon"
             className=" rounded-lg block w-full pl-10  border border-dark-grey text-body-m  focus:border-custom-blue focus:outline-custom-blue focus:shadow-sm focus:shadow-custom-blue"
             placeholder="At least 8 characters"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </div>
-        <h1 className="items-center  mt-5 text-body-s ">Password must contain at least 8 characters</h1>
-        <button className="bg-custom-blue text-white text-heading-s w-full rounded-lg mt-5">
+        
+        {error && <p className="text-red-500 items-center mt-5 text-body-s">{error}</p>}
+        <button 
+        className="bg-custom-blue text-white text-heading-s w-full rounded-lg mt-5" 
+        type="submit">
         Create new account
         </button>
       </form>
