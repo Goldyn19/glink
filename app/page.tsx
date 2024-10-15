@@ -115,7 +115,7 @@ export default function Home() {
           </button>
         </form>
         <h1 className="flex mx-auto items-center justify-center mt-5 text-body-m">
-          <span>Don &apos t have an account? </span>
+          <span className=''>Don&apos;t have an account? </span>
           <a href="/signup" className="text-custom-blue pl-1">Create account</a>
         </h1>
       </div>
